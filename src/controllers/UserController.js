@@ -10,14 +10,12 @@ module.exports = {
     async store(req, res){
         try{                      
             username = req.body.username;
-            email = req.body.email;
             walletAdress = req.body.walletAdress;
             password = req.body.password;
             userKind = req.body.userKind;
 
             const user = await User.create({         
                 username,
-                email,
                 walletAdress,
                 password,    
                 userKind,                                
@@ -35,10 +33,10 @@ module.exports = {
     
     async login(req, res){
         try{  
-            email = req.body.email;
+            username = req.body.username;
             password = req.body.password;
 
-            const Users = await User.findOne({email: email, password: password});
+            const Users = await User.findOne({username: username, password: password});
 
             if (Users == null){
                 return res.json({'status':'NAOACHOU'});
@@ -47,7 +45,6 @@ module.exports = {
                     'status':'ACHOU',
                     '_id': Users._id,
                     'username': Users.username,
-                    'email': Users.email,
                     'walletAdress': Users.walletAdress,
                     'depositHashTransactions': Users.depositHashTransactions,
                     'totalAmountInvested': Users.totalAmountInvested,
@@ -126,7 +123,6 @@ module.exports = {
                     'status':'ACHOU',
                     '_id': Users._id,
                     'username': Users.username,
-                    'email': Users.email,
                     'walletAdress': Users.walletAdress,
                     'depositHashTransactions': Users.depositHashTransactions,
                     'totalAmountInvested': Users.totalAmountInvested,

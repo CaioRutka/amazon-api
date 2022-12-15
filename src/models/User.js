@@ -7,10 +7,8 @@ const UserSchema = new mongoose.Schema({
         require: true,
     },
 
-    email: {
-        type: String, 
-        unique: true,
-        require: true,
+    password: {
+        type: String,
     },
 
     walletAdress: {
@@ -24,11 +22,7 @@ const UserSchema = new mongoose.Schema({
     totalAmountInvested: {
         type: Number,
         default: 0,
-    },
-
-    password: {
-        type: String,
-    },
+    },   
     
     userKind: {
         type: String,
