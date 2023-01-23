@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const Bcrypt = require("bcryptjs");
 
 module.exports = {
     async index(req, res){
@@ -11,7 +12,7 @@ module.exports = {
         try{                      
             username = req.body.username;
             walletAdress = req.body.walletAdress;
-            password = req.body.password;
+            password = Bcrypt.hashSync(req.body.password, 10);
             userKind = req.body.userKind;
 
             const user = await User.create({         
@@ -35,19 +36,26 @@ module.exports = {
         try{  
             username = req.body.username;
             password = req.body.password;
+            
+            var user = await User.findOne({ username: username }).exec();
 
-            const Users = await User.findOne({username: username, password: password});
-
-            if (Users == null){
+            if (!user) 
+            {
                 return res.json({'status':'NAOACHOU'});
-            } else if (Users != null){
+            }
+            else if (!Bcrypt.compareSync(password, user.password)) 
+            {
+                return res.json({'status':'NAOACHOU'});
+            } 
+            else if (Bcrypt.compareSync(password, user.password)) 
+            {
                 return res.json({
                     'status':'ACHOU',
-                    '_id': Users._id,
-                    'username': Users.username,
-                    'walletAdress': Users.walletAdress,
-                    'depositHashTransactions': Users.depositHashTransactions,
-                    'totalAmountInvested': Users.totalAmountInvested,
+                    '_id': user._id,
+                    'username': user.username,
+                    'walletAdress': user.walletAdress,
+                    'depositHashTransactions': user.depositHashTransactions,
+                    'totalAmountInvested': user.totalAmountInvested,
                 }                    
                 );
             }
@@ -63,33 +71,6 @@ module.exports = {
 
             User.findByIdAndUpdate(_id,
                 {$push: {depositHashTransactions: depositHashTransactions}},
-                {safe: true, upsert: true},
-                function(err, doc) {
-                    if(err){
-                        return res.json({
-                            'status':'Not Updated',
-                            }                    
-                        );
-                    } else {
-                        return res.json({
-                            'status':'Updated',
-                            }                    
-                        );
-                    }
-                }
-            );
-        }catch(error){
-            console.log(error.message);
-        }  
-    },
-
-    async updateTotalAmountInvested(req, res){
-        try{  
-            _id = req.body._id;
-            amount = req.body.amount;
-
-            User.findByIdAndUpdate(_id,
-                {$set: {'totalAmountInvested': amount}},
                 {safe: true, upsert: true},
                 function(err, doc) {
                     if(err){

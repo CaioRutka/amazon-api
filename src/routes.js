@@ -12,6 +12,5 @@ routes.get('/user', UserController.index);
 routes.post('/user/login', upload.single(), UserController.login);
 routes.post('/user', upload.single(), UserController.store);
 routes.post('/user/newhash', upload.single(), UserController.addNewHash);
-routes.post('/user/updateamount', upload.single(), UserController.updateTotalAmountInvested);
 
 module.exports = routes;
